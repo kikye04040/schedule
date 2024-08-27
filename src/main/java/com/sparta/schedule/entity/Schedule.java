@@ -7,35 +7,36 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @Table(name = "schedules")
 @NoArgsConstructor
-public class Schedule {
+public class Schedule extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String username;
     private String title;
     private String description;
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
+
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
     public Schedule(ScheduleRequestDto requestDto) {
         this.username = requestDto.getUsername();
         this.title = requestDto.getTitle();
         this.description = requestDto.getDescription();
-        this.createdDate = LocalDateTime.now();
-        this.createdDate = LocalDateTime.now();
     }
 
     public void update(ScheduleRequestDto requestDto) {
         this.username = requestDto.getUsername();
         this.title = requestDto.getTitle();
         this.description = requestDto.getDescription();
-        this.modifiedDate = LocalDateTime.now();
+    }
+
+    public int getCommentCount() {
+        return comments.size();
     }
 }

@@ -11,6 +11,7 @@ public class ScheduleResponseDto {
     private String username;
     private String title;
     private String description;
+    private int commentCount;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
 
@@ -19,6 +20,7 @@ public class ScheduleResponseDto {
         this.username = schedule.getUsername();
         this.title = schedule.getTitle();
         this.description = schedule.getDescription();
+        this.commentCount = schedule.getCommentCount();
         this.createdDate = schedule.getCreatedDate();
         this.modifiedDate = schedule.getModifiedDate();
     }
