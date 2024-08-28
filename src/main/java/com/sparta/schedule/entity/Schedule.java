@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,21 +18,31 @@ public class Schedule extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private String description;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
-    public Schedule(ScheduleRequestDto requestDto) {
-        this.username = requestDto.getUsername();
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ScheduleUser> scheduleUsers;
+
+    public Schedule(ScheduleRequestDto requestDto, User user) {
+        this.user = user;
         this.title = requestDto.getTitle();
         this.description = requestDto.getDescription();
     }
 
-    public void update(ScheduleRequestDto requestDto) {
-        this.username = requestDto.getUsername();
+    public void Update(ScheduleRequestDto requestDto, User user) {
+        this.user = user;
         this.title = requestDto.getTitle();
         this.description = requestDto.getDescription();
     }

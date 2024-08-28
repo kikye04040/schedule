@@ -3,7 +3,9 @@ package com.sparta.schedule.service;
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Schedule;
+import com.sparta.schedule.entity.User;
 import com.sparta.schedule.repository.ScheduleRepository;
+import com.sparta.schedule.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
@@ -16,12 +18,16 @@ import java.util.stream.Collectors;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    public ScheduleService(ScheduleRepository scheduleRepository) {
+    private final UserRepository userRepository;
+    public ScheduleService(ScheduleRepository scheduleRepository, UserRepository userRepository) {
         this.scheduleRepository = scheduleRepository;
+        this.userRepository = userRepository;
     }
 
     public ScheduleResponseDto saveSchedule(ScheduleRequestDto requestDto) {
-        Schedule schedule = new Schedule(requestDto);
+        User user = userRepository.findById(requestDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        Schedule schedule = new Schedule(requestDto, user);
         Schedule savedSchedule = scheduleRepository.save(schedule);
         return new ScheduleResponseDto(savedSchedule);
     }
@@ -35,7 +41,9 @@ public class ScheduleService {
     public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto requestDto) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID를 가진 할일이 존재하지 않습니다."));
-        schedule.update(requestDto);
+        User user = userRepository.findById(requestDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        schedule.Update(requestDto, user);
         Schedule updatedSchedule = scheduleRepository.save(schedule);
         return new ScheduleResponseDto(updatedSchedule);
     }
