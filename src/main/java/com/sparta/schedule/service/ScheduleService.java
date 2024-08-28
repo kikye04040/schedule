@@ -2,6 +2,7 @@ package com.sparta.schedule.service;
 
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
+import com.sparta.schedule.dto.UserResponseDto;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.entity.User;
 import com.sparta.schedule.repository.ScheduleRepository;
@@ -35,7 +36,13 @@ public class ScheduleService {
     public ScheduleResponseDto getSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID를 가진 할일이 존재하지 않습니다."));
-        return new ScheduleResponseDto(schedule);
+        ScheduleResponseDto dto = new ScheduleResponseDto(schedule);
+        if (schedule.getScheduleUsers() != null) {
+            dto.setUsers(schedule.getScheduleUsers().stream().map(scheduleUser -> {
+                return new UserResponseDto(scheduleUser.getUser());
+            }).collect(Collectors.toList()));
+        }
+        return dto;
     }
 
     public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto requestDto) {

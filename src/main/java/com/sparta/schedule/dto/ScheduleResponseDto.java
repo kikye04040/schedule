@@ -2,10 +2,13 @@ package com.sparta.schedule.dto;
 
 import com.sparta.schedule.entity.Schedule;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
+@Setter
 public class ScheduleResponseDto {
     private Long id;
     private Long userId;
@@ -14,6 +17,7 @@ public class ScheduleResponseDto {
     private int commentCount;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
+    private List<UserResponseDto> users;
 
     public ScheduleResponseDto(Schedule schedule) {
         this.id = schedule.getId();
